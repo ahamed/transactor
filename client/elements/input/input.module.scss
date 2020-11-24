@@ -1,0 +1,16 @@
+.input-group {
+	min-height: 110px;
+	.help-icon {
+		margin-left: 10px;
+		color: #adb5bd;
+		cursor: pointer;
+		transition: color 0.3s;
+		&:hover {
+			color: #222222;
+		}
+	}
+
+	.help-text {
+		color: #6d6d6d;
+	}
+}

@@ -1,0 +1,18 @@
+.transactor-application {
+	.preset {
+		padding: 0 30px;
+		position: relative;
+
+		.page-container {
+			height: 90vh;
+		}
+	}
+
+	.application-body {
+		height: 90%;
+	}
+	.application-footer {
+		min-height: 10vh;
+		background: red;
+	}
+}

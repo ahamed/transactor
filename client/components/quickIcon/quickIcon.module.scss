@@ -1,0 +1,33 @@
+.quick-icon-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 50px;
+	transition: all 0.5s ease;
+
+	&:hover {
+		button {
+			span.icon {
+				color: #17a2b8;
+				transform: scale(1.1);
+			}
+		}
+	}
+
+	button {
+		background: transparent;
+		border: none;
+		outline: none;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		span.icon {
+			font-size: 30px;
+			margin-bottom: 15px;
+			color: #aeaeae;
+		}
+	}
+}
