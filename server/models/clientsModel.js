@@ -38,6 +38,10 @@ const Schema = new mongoose.Schema({
     trim: true,
     default: '',
   },
+  createdAt: {
+    type: Date,
+    default: new Date().toISOString(),
+  },
 });
 
 const Client = mongoose.model('Client', Schema);

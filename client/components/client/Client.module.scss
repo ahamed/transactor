@@ -1,0 +1,43 @@
+.client-wrapper {
+	display: flex;
+	min-width: 0;
+	word-wrap: break-word;
+	background-color: #fff;
+	background-clip: border-box;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.15);
+	border-radius: 0.3438rem;
+
+	.client-info {
+		width: 100%;
+	}
+
+	.avatar {
+		margin-bottom: 10px;
+		img {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			border: 2px solid #d7d7d7;
+		}
+	}
+
+	.title {
+		font-size: 18px;
+		font-weight: 600;
+		margin-bottom: 20px;
+	}
+
+	.client-icon {
+		margin-right: 5px;
+		color: #007bff;
+		font-size: 12px;
+		background: #cce5ff;
+		width: 25px;
+		height: 25px;
+		text-align: center;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+	}
+}

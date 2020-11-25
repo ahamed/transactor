@@ -2,6 +2,14 @@ import '../styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const client = new ApolloClient({
+	// uri: 'http://localhost:4001/api/v1/terminal',
+	uri: 'http://192.168.1.104:4001/api/v1/terminal',
+	cache: new InMemoryCache(),
+});
+
 import { motion, AnimatePresence } from 'framer-motion';
 
 function MyApp({ Component, pageProps, router }) {
@@ -37,7 +45,9 @@ function MyApp({ Component, pageProps, router }) {
 						ease: 'easeInOut',
 					}}
 				>
-					<Component {...pageProps} />
+					<ApolloProvider client={client}>
+						<Component {...pageProps} />
+					</ApolloProvider>
 				</motion.div>
 			</AnimatePresence>
 		</div>

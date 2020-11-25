@@ -18,6 +18,7 @@ const app = express();
  * 3. Attach graphql endpoint with schema.
  */
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 app.use(cors());
 app.use(
   '/api/v1/terminal',

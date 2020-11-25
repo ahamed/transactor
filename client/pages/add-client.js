@@ -1,17 +1,48 @@
 import { useState } from 'react';
 import Layout from '../components/layouts/Layout';
 import Head from 'next/head';
-import styles from '../styles/Client.module.scss';
-import Box from '../elements/box/box';
-import QuickIcon from '../components/quickIcon/quickIcon';
+import styles from '../styles/AddClient.module.scss';
 import Input from '../elements/input/input';
 import TextArea from '../elements/textarea/textarea';
+import { useMutation } from '@apollo/client';
+import { ADD_CLIENT_QUERY } from '../queries/clients';
+import swal from 'sweetalert';
 
-const Client = () => {
-	const [data, setData] = useState({ name: '', mobile: '' });
+const AddClient = () => {
+	const [addClient, { loading: mutationLoading }] = useMutation(
+		ADD_CLIENT_QUERY
+	);
+
+	const [data, setData] = useState({
+		name: '',
+		mobile: '',
+		address: '',
+		note: '',
+	});
+
 	const handleChange = event => {
-		const [name, value] = event.target;
-		setData({ [name]: value });
+		const { name, value } = event.target;
+		setData({ ...data, [name]: value });
+	};
+
+	const handleSubmission = async event => {
+		event.preventDefault();
+
+		try {
+			await addClient({
+				variables: data,
+			});
+			setData({ name: '', mobile: '', address: '', note: '' });
+
+			swal({
+				title: 'Success',
+				text: 'Client added',
+				icon: 'success',
+				timer: 2000,
+			});
+		} catch (err) {
+			swal('Attention', err.message, 'error');
+		}
 	};
 
 	return (
@@ -21,8 +52,16 @@ const Client = () => {
 			</Head>
 			<div className={styles['tnx-page-client']}>
 				<div className='row'>
+					<div className='col-12'>
+						<div className='title'>
+							<span className='title-icon primary fas fa-users-cog'></span>
+							<div>Add Client</div>
+						</div>
+					</div>
+				</div>
+				<div className='row'>
 					<div className='col-12 col-md-6'>
-						<form>
+						<form onSubmit={handleSubmission}>
 							<Input
 								type='text'
 								label='Name'
@@ -77,4 +116,4 @@ const Client = () => {
 	);
 };
 
-export default Client;
+export default AddClient;

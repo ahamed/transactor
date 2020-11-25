@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
 	const router = useRouter();
 
 	return (
-		<div className='transactor-application'>
+		<div className={`${styles['transactor-application']}`}>
 			<Navbar />
 			<div className={`container ${styles.preset}`}>
 				{router.pathname !== '/' && (

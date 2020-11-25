@@ -18,22 +18,22 @@ export default function Home() {
 							<QuickIcon
 								icon='fas fa-user-plus'
 								text='Client'
-								href='/client'
+								href='/add-client'
 							/>
 						</Box>
 					</div>
 					<div className='col-6 col-md-4'>
 						<Box>
 							<QuickIcon
-								icon='fas fa-chart-pie'
-								text='Stats'
-								href='/'
+								icon='fas fa-users'
+								text='Clients'
+								href='/clients'
 							/>
 						</Box>
 					</div>
 				</div>
 				<div className='row'>
-					<div className='col-6 col-md-4 mt-5 '>
+					<div className='col-6 col-md-4 mt-4 '>
 						<Box>
 							<QuickIcon
 								icon='fas fa-credit-card'
@@ -42,11 +42,23 @@ export default function Home() {
 							/>
 						</Box>
 					</div>
-					<div className='col-6 col-md-4 mt-5 '>
+					<div className='col-6 col-md-4 mt-4 '>
 						<Box>
 							<QuickIcon
 								icon='fas fa-money-check-alt'
 								text='Daily Debited'
+								href='/'
+							/>
+						</Box>
+					</div>
+				</div>
+
+				<div className='row'>
+					<div className='col-6 col-md-4 mt-4'>
+						<Box>
+							<QuickIcon
+								icon='fas fa-chart-pie'
+								text='Stats'
 								href='/'
 							/>
 						</Box>

@@ -19,6 +19,7 @@ const ClientType = new GraphQLObjectType({
     avatar: { type: GraphQLString },
     address: { type: GraphQLString },
     note: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
   }),
 });
 
@@ -52,6 +53,9 @@ const Mutation = new GraphQLObjectType({
         avatar: { type: GraphQLString },
         address: { type: GraphQLString },
         note: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return Client.create(args);
       },
     },
   },
