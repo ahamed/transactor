@@ -11,13 +11,13 @@ const Layout = ({ children }) => {
 			<Navbar />
 			<div className={`container ${styles.preset}`}>
 				{router.pathname !== '/' && (
-					<Link href='/'>
-						<div className={`${styles['dashboard']} row mt-3 mb-2`}>
-							<div className='col-12'>
-								<span className='fas fa-arrow-alt-circle-left fa-2x'></span>
-							</div>
-						</div>
-					</Link>
+					<button
+						className={`${styles['back-btn']} mb-3 mt-3`}
+						type='button'
+						onClick={() => router.back()}
+					>
+						<span className='fas fa-chevron-left'></span> Back
+					</button>
 				)}
 				{children}
 			</div>

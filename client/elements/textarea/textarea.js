@@ -12,7 +12,7 @@ const TextArea = ({
 	required = false,
 	...otherProps
 }) => {
-	const [showHelp, toggleHelp] = useState(true);
+	const [showHelp, toggleHelp] = useState(false);
 
 	return (
 		<div className={style['input-group']}>

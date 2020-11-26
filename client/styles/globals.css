@@ -29,6 +29,12 @@ a {
 	margin-bottom: 10px;
 }
 
+.input-group-text {
+	color: #097bfe !important;
+	background-color: #cce5fe !important;
+	padding-top: 10px !important;
+}
+
 .title {
 	min-width: 0;
 	word-wrap: break-word;

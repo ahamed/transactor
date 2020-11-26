@@ -8,6 +8,7 @@ const {
   GraphQLNonNull,
   GraphQLList,
   GraphQLSchema,
+  GraphQLInt,
 } = graphql;
 
 const ClientType = new GraphQLObjectType({
@@ -28,8 +29,27 @@ const rootQuery = new GraphQLObjectType({
   fields: {
     clients: {
       type: new GraphQLList(ClientType),
+      args: {
+        page: { type: GraphQLInt },
+        limit: { type: GraphQLInt },
+        filter: { type: GraphQLString },
+      },
       resolve(parent, args) {
-        return Client.find({});
+        let query = Client.find({});
+        query = query.sort('name');
+
+        const page = args.page >> 0 || 1;
+        const limit = args.limit >> 0 || 20;
+        const skip = Math.max(0, page - 1) * limit;
+
+        if (args.filter) {
+          const regex = new RegExp(args.filter, 'ig');
+          query = query.find({ name: regex });
+        }
+
+        query = query.skip(skip).limit(limit);
+
+        return query;
       },
     },
     client: {
@@ -56,6 +76,20 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return Client.create(args);
+      },
+    },
+    updateClient: {
+      type: ClientType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        mobile: { type: new GraphQLNonNull(GraphQLString) },
+        avatar: { type: GraphQLString },
+        address: { type: GraphQLString },
+        note: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return Client.findByIdAndUpdate(args.id, args, { new: true });
       },
     },
   },

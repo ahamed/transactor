@@ -22,9 +22,33 @@ export const ADD_CLIENT_QUERY = gql`
 	}
 `;
 
+export const UPDATE_CLIENT_QUERY = gql`
+	mutation UpdateClient(
+		$id: ID!
+		$name: String!
+		$mobile: String!
+		$address: String
+		$note: String
+	) {
+		updateClient(
+			id: $id
+			name: $name
+			mobile: $mobile
+			address: $address
+			note: $note
+		) {
+			id
+			name
+			mobile
+			address
+			note
+		}
+	}
+`;
+
 export const GET_CLIENTS_QUERY = gql`
-	query GetClients {
-		clients {
+	query GetClients($page: Int, $limit: Int, $filter: String) {
+		clients(page: $page, limit: $limit, filter: $filter) {
 			id
 			name
 			mobile

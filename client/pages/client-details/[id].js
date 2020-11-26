@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useLazyQuery } from '@apollo/client';
 import swal from 'sweetalert';
 
+import Link from 'next/link';
 import Head from 'next/head';
 import Layout from '../../components/layouts/Layout';
 
@@ -75,10 +76,12 @@ const ClientDetails = () => {
 									</span>
 								</div>
 							)}
-
-							<button className='btn btn-primary btn-xs mt-3'>
-								<span className='fas fa-user-edit'></span> Edit
-							</button>
+							<Link href={`/edit-client/${data.client.id}`}>
+								<button className='btn btn-primary btn-xs mt-3'>
+									<span className='fas fa-user-edit'></span>{' '}
+									Edit
+								</button>
+							</Link>
 						</div>
 					)}
 				</div>

@@ -1,29 +1,54 @@
-import { useState } from 'react';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import swal from 'sweetalert';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 
-import Layout from '../components/layouts/Layout';
-import Input from '../elements/input/input';
-import TextArea from '../elements/textarea/textarea';
-import styles from '../styles/AddClient.module.scss';
+import Head from 'next/head';
+import Layout from '../../components/layouts/Layout';
+import Input from '../../elements/input/input';
+import TextArea from '../../elements/textarea/textarea';
 
-import { useMutation } from '@apollo/client';
-import { ADD_CLIENT_QUERY } from '../queries/clients';
+import {
+	GET_CLIENT_BY_ID_QUERY,
+	UPDATE_CLIENT_QUERY,
+} from '../../queries/clients';
+
+import styles from '../../styles/AddClient.module.scss';
 
 const AddClient = () => {
 	const [
-		addClient,
-		{ loading: mutationLoading, data: clientData },
-	] = useMutation(ADD_CLIENT_QUERY);
-	const router = useRouter();
+		getClient,
+		{ loading: clientLoading, error: clientError, data: clientData },
+	] = useLazyQuery(GET_CLIENT_BY_ID_QUERY);
 
+	const [updateClient, { data: mutationData }] = useMutation(
+		UPDATE_CLIENT_QUERY
+	);
+
+	const router = useRouter();
 	const [data, setData] = useState({
 		name: '',
 		mobile: '',
 		address: '',
 		note: '',
 	});
+
+	useEffect(() => {
+		if (router.query.id) {
+			getClient({ variables: { id: router.query.id } });
+
+			if (clientData) {
+				const { name, mobile, address, note } = clientData.client;
+				setData({
+					...data,
+					name,
+					mobile,
+					address,
+					note,
+				});
+			}
+		}
+	}, [router.query.id, clientData]);
 
 	const handleChange = event => {
 		const { name, value } = event.target;
@@ -34,24 +59,19 @@ const AddClient = () => {
 		event.preventDefault();
 
 		try {
-			const response = await addClient({
-				variables: data,
+			await updateClient({
+				variables: { id: router.query.id, ...data },
 			});
-			setData({ name: '', mobile: '', address: '', note: '' });
 
-			if (response?.data?.addClient) {
-				swal({
-					title: 'Success',
-					text: 'Client Added Successfully!',
-					icon: 'success',
-					timer: 1000,
-					buttons: false,
-				}).then(() => {
-					router.push(
-						`/client-details/${response.data.addClient.id}`
-					);
-				});
-			}
+			swal({
+				title: 'Success',
+				text: 'Client Updated Successfully!',
+				icon: 'success',
+				timer: 1000,
+				buttons: false,
+			}).then(() => {
+				router.push(`/client-details/${router.query.id}`);
+			});
 		} catch (err) {
 			swal('Attention', err.message, 'error');
 		}
@@ -60,14 +80,14 @@ const AddClient = () => {
 	return (
 		<Layout>
 			<Head>
-				<title>Add Client</title>
+				<title>Edit Client</title>
 			</Head>
 			<div className={styles['tnx-page-client']}>
 				<div className='row'>
 					<div className='col-12'>
 						<div className='title'>
-							<span className='title-icon primary fas fa-users-cog'></span>
-							<div>Add Client</div>
+							<span className='title-icon primary fas fa-user-edit'></span>
+							<div>Edit Client</div>
 						</div>
 					</div>
 				</div>
@@ -116,9 +136,9 @@ const AddClient = () => {
 
 							<button
 								type='submit'
-								className='btn btn-primary btn-block mb-3 mt-4'
+								className='btn btn-primary btn-block mt-4 mb-3'
 							>
-								<span className='fas fa-user-check'></span> Add
+								<span className='fas fa-save'></span> Update
 							</button>
 						</form>
 					</div>
