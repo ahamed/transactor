@@ -79,11 +79,17 @@ const Clients = () => {
 				</div>
 				{loading ? (
 					<div>Loading...</div>
-				) : (
-					clientData &&
+				) : clientData && clientData.length > 0 ? (
 					clientData.map(client => (
 						<Client client={client} key={client.id} />
 					))
+				) : (
+					<div className={`${styles['no-client']}`}>
+						<img src='/images/empty.png' alt='' />
+						<div className={`${styles['text']}`}>
+							No client added yet!
+						</div>
+					</div>
 				)}
 			</div>
 		</Layout>

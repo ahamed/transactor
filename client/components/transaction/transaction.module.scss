@@ -1,0 +1,84 @@
+.transaction {
+	border: 1px solid #aeaeae;
+	margin-bottom: 20px;
+	padding: 20px 20px 10px 20px;
+	border-radius: 5px;
+	box-shadow: 3px 3px 5px 2px #e9ecef;
+
+	.price-amount {
+		font-size: 16px;
+
+		&.success {
+			color: #50b83c;
+		}
+		&.danger {
+			color: #ff5631;
+		}
+	}
+
+	.created {
+		color: #6c757d;
+	}
+
+	.row-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.control-panel {
+			button {
+				background: transparent;
+				border: none;
+				outline: 0;
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+
+				&.is-success {
+					color: #50b83c !important;
+					background: #d5f0d0 !important;
+				}
+				&.is-danger {
+					background-color: #ffe8e4 !important;
+					color: #ff5631 !important;
+				}
+				&.is-primary {
+					background-color: #cce5ff !important;
+					color: #007bff !important;
+				}
+
+				span {
+					font-size: 14px;
+				}
+			}
+		}
+	}
+
+	.badge {
+		display: inline-block;
+		line-height: 1;
+		text-align: center;
+		white-space: nowrap;
+		vertical-align: baseline;
+		font-size: 0.6875rem;
+		padding: 0.333em 0.6rem;
+		border-radius: 20px;
+		font-weight: 400;
+		&.is-danger {
+			background-color: #ffe8e4;
+			color: #ff5631;
+		}
+
+		&.is-primary {
+			background-color: #cce5ff;
+			color: #007bff;
+		}
+		&.is-success {
+			background-color: #d5f0d0;
+			color: #50b83c;
+		}
+	}
+}

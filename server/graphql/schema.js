@@ -1,5 +1,6 @@
 const graphql = require('graphql');
 const Client = require('../models/clientsModel');
+const Transaction = require('../models/transactionModel');
 
 const {
   GraphQLObjectType,
@@ -21,6 +22,26 @@ const ClientType = new GraphQLObjectType({
     address: { type: GraphQLString },
     note: { type: GraphQLString },
     createdAt: { type: GraphQLString },
+    transactions: {
+      type: new GraphQLList(TransactionType),
+      resolve(parent, args) {
+        let query = Transaction.find({ clientId: parent.id });
+        query = query.sort('-createdAt');
+
+        return query;
+      },
+    },
+  }),
+});
+
+const TransactionType = new GraphQLObjectType({
+  name: 'Transaction',
+  fields: () => ({
+    id: { type: GraphQLID },
+    amount: { type: GraphQLInt },
+    clientId: { type: GraphQLID },
+    createdAt: { type: GraphQLString },
+    type: { type: GraphQLString },
   }),
 });
 
@@ -90,6 +111,17 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return Client.findByIdAndUpdate(args.id, args, { new: true });
+      },
+    },
+    addTransaction: {
+      type: TransactionType,
+      args: {
+        amount: { type: new GraphQLNonNull(GraphQLInt) },
+        type: { type: new GraphQLNonNull(GraphQLString) },
+        clientId: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parent, args) {
+        return Transaction.create(args);
       },
     },
   },

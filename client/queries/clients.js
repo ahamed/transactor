@@ -68,6 +68,12 @@ export const GET_CLIENT_BY_ID_QUERY = gql`
 			address
 			note
 			createdAt
+			transactions {
+				id
+				type
+				amount
+				createdAt
+			}
 		}
 	}
 `;

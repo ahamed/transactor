@@ -7,10 +7,12 @@ import swal from 'sweetalert';
 import Link from 'next/link';
 import Head from 'next/head';
 import Layout from '../../components/layouts/Layout';
+import AddTransaction from '../../components/addTransaction/addTransaction';
 
 import { serverURI } from '../../utils';
 import { GET_CLIENT_BY_ID_QUERY } from '../../queries/clients';
 import styles from '../../styles/ClientDetails.module.scss';
+import TransactionList from '../../components/transactionList/transactionList';
 
 const ClientDetails = () => {
 	const router = useRouter();
@@ -85,6 +87,20 @@ const ClientDetails = () => {
 						</div>
 					)}
 				</div>
+
+				{/* transaction section */}
+				<div className='mt-3'>
+					<AddTransaction />
+				</div>
+
+				{/* transaction list */}
+				{data && (
+					<div className='mt-3'>
+						<TransactionList
+							transactions={data.client.transactions || []}
+						/>
+					</div>
+				)}
 			</div>
 		</Layout>
 	);
