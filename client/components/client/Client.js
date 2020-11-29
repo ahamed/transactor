@@ -34,6 +34,30 @@ const Client = ({ client }) => {
 							<small>{client.address}</small>
 						</div>
 					)}
+					{client.balance !== undefined && (
+						<div className='d-flex align-items-center mt-2'>
+							<span
+								className={`${style['client-icon']} title-icon primary fas fa-wallet`}
+							></span>
+							{client.balance === 0 ? (
+								<small className='fas fa-check-circle txt-success'></small>
+							) : (
+								<small
+									className={`${
+										style[
+											client.balance > 0
+												? 'client-text-success'
+												: 'client-text-danger'
+										]
+									}`}
+								>
+									{client.balance > 0
+										? `+ ৳${client.balance}`
+										: `- ৳${client.balance * -1}`}
+								</small>
+							)}
+						</div>
+					)}
 				</div>
 			</div>
 		</Link>

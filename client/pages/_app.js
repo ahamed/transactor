@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import Head from 'next/head';
 

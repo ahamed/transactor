@@ -81,3 +81,17 @@ a {
 	background-color: #feecf0 !important;
 	color: #cc0f35 !important;
 }
+
+.txt-success {
+	color: #50b83c !important;
+	font-weight: 600 !important;
+}
+
+.txt-danger {
+	color: #ff5631 !important;
+	font-weight: 600 !important;
+}
+
+.react-datepicker-wrapper {
+	flex: 1 1;
+}

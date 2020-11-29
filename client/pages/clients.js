@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import swal from 'sweetalert';
 import _ from 'lodash';
+import DatePicker from 'react-datepicker';
 
 import Head from 'next/head';
 import Layout from '../components/layouts/Layout';
@@ -13,6 +14,7 @@ import { GET_CLIENTS_QUERY } from '../queries/clients';
 
 const Clients = () => {
 	const [clientData, setClientData] = useState([]);
+	const [filterDate, setDate] = useState(null);
 	const [filter, setFilter] = useState(null);
 
 	const [fetchClients, { loading, error, data }] = useLazyQuery(
@@ -27,6 +29,7 @@ const Clients = () => {
 
 	useEffect(() => {
 		if (data?.clients) setClientData(data.clients);
+		console.log(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -46,6 +49,19 @@ const Clients = () => {
 			});
 		}
 	}, [filter]);
+
+	useEffect(() => {
+		if (filterDate !== null) {
+			console.log(filterDate.toISOString());
+			fetchClients({
+				variables: {
+					limit: 500,
+					page: 1,
+					createdAt: filterDate.toISOString(),
+				},
+			});
+		}
+	}, [filterDate]);
 
 	const handleFilter = event => {
 		event.preventDefault();
@@ -72,8 +88,21 @@ const Clients = () => {
 						<input
 							type='text'
 							className='form-control'
-							placeholder='Filter by client name'
+							placeholder='Filter by Client Name'
 							onChange={_.debounce(handleFilter, 300)}
+						/>
+					</div>
+				</div>
+				<div className='box'>
+					<div className='input-group'>
+						<div className='input-group-prepend'>
+							<span className='input-group-text fas fa-calendar'></span>
+						</div>
+						<DatePicker
+							className='form-control'
+							placeholderText='Filter by Transaction Date'
+							selected={filterDate}
+							onChange={date => setDate(date)}
 						/>
 					</div>
 				</div>
@@ -87,7 +116,9 @@ const Clients = () => {
 					<div className={`${styles['no-client']}`}>
 						<img src='/images/empty.png' alt='' />
 						<div className={`${styles['text']}`}>
-							No client added yet!
+							{filter
+								? `Opps! No client found with name "${filter}"!`
+								: 'No client added yet!'}
 						</div>
 					</div>
 				)}

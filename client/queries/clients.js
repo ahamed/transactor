@@ -47,13 +47,29 @@ export const UPDATE_CLIENT_QUERY = gql`
 `;
 
 export const GET_CLIENTS_QUERY = gql`
-	query GetClients($page: Int, $limit: Int, $filter: String) {
-		clients(page: $page, limit: $limit, filter: $filter) {
+	query GetClients(
+		$page: Int
+		$limit: Int
+		$filter: String
+		$createdAt: DateTime
+	) {
+		clients(
+			page: $page
+			limit: $limit
+			filter: $filter
+			createdAt: $createdAt
+		) {
 			id
 			name
 			mobile
 			avatar
 			address
+			transactions {
+				id
+				amount
+				type
+			}
+			balance
 		}
 	}
 `;
@@ -72,8 +88,10 @@ export const GET_CLIENT_BY_ID_QUERY = gql`
 				id
 				type
 				amount
+				clientId
 				createdAt
 			}
+			balance
 		}
 	}
 `;

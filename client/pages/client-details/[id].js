@@ -53,9 +53,12 @@ const ClientDetails = () => {
 								<span
 									className={`${styles['info-icon']} fas fa-phone-alt`}
 								></span>
-								<span className='mobile'>
+								<a
+									className='mobile'
+									href={`tel:${data.client.mobile}`}
+								>
 									{data.client.mobile}
-								</span>
+								</a>
 							</div>
 							{data.client.address && (
 								<div className={`${styles['info']}`}>
@@ -89,15 +92,18 @@ const ClientDetails = () => {
 				</div>
 
 				{/* transaction section */}
-				<div className='mt-3'>
-					<AddTransaction />
-				</div>
+				{data && (
+					<div className='mt-3'>
+						<AddTransaction clientId={data.client.id} />
+					</div>
+				)}
 
 				{/* transaction list */}
 				{data && (
 					<div className='mt-3'>
 						<TransactionList
 							transactions={data.client.transactions || []}
+							balance={data.client.balance || 0}
 						/>
 					</div>
 				)}

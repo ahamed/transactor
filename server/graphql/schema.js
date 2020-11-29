@@ -1,4 +1,9 @@
+const { startOfDay, endOfDay } = require('date-fns');
 const graphql = require('graphql');
+const ISODate = require('graphql-iso-date');
+const { format } = require('date-fns');
+
+const { Types } = require('mongoose');
 const Client = require('../models/clientsModel');
 const Transaction = require('../models/transactionModel');
 
@@ -11,6 +16,8 @@ const {
   GraphQLSchema,
   GraphQLInt,
 } = graphql;
+
+const { GraphQLDateTime } = ISODate;
 
 const ClientType = new GraphQLObjectType({
   name: 'Client',
@@ -31,6 +38,39 @@ const ClientType = new GraphQLObjectType({
         return query;
       },
     },
+    balance: {
+      type: GraphQLInt,
+      async resolve(parent, args) {
+        /**
+         * Group the amount by transaction type i.e. incoming/outgoing
+         */
+        const balance = await Transaction.aggregate([
+          {
+            $match: {
+              clientId: Types.ObjectId(parent.id),
+            },
+          },
+          {
+            $group: {
+              _id: '$type',
+              bal: { $sum: '$amount' },
+            },
+          },
+        ]);
+
+        let incoming = 0;
+        let outgoing = 0;
+
+        if (balance && balance.length > 0) {
+          balance.forEach(({ _id, bal }) => {
+            if (_id === 'incoming') incoming = bal;
+            else outgoing = bal;
+          });
+        }
+
+        return incoming - outgoing;
+      },
+    },
   }),
 });
 
@@ -40,8 +80,16 @@ const TransactionType = new GraphQLObjectType({
     id: { type: GraphQLID },
     amount: { type: GraphQLInt },
     clientId: { type: GraphQLID },
-    createdAt: { type: GraphQLString },
+    createdAt: {
+      type: GraphQLDateTime,
+    },
     type: { type: GraphQLString },
+    client: {
+      type: ClientType,
+      resolve(parent, args) {
+        return Client.findById(parent.clientId);
+      },
+    },
   }),
 });
 
@@ -54,15 +102,64 @@ const rootQuery = new GraphQLObjectType({
         page: { type: GraphQLInt },
         limit: { type: GraphQLInt },
         filter: { type: GraphQLString },
+        createdAt: { type: GraphQLDateTime },
+        type: { type: GraphQLString },
       },
-      resolve(parent, args) {
+      async resolve(parent, args) {
         let query = Client.find({});
+
+        /**
+         * If need to filter the transactions by its created date
+         */
+        if (args.createdAt) {
+          let transactions = Transaction.find({
+            createdAt: {
+              $gte: startOfDay(args.createdAt),
+              $lte: endOfDay(args.createdAt),
+            },
+          });
+          transactions = transactions.select('clientId');
+          transactions = await transactions.exec();
+
+          let _ids = [];
+          if (transactions) {
+            _ids = transactions.map((item) => item.clientId);
+          }
+
+          if (_ids) {
+            query = query.find({ _id: { $in: _ids } });
+          }
+        }
+
+        /**
+         * If need to query transactions by type
+         */
+        if (args.type) {
+          let transactions = Transaction.find({
+            type: args.type,
+          });
+          transactions = transactions.select('clientId');
+          transactions = await transactions.exec();
+
+          let _ids = [];
+          if (transactions) {
+            _ids = transactions.map((item) => item.clientId);
+          }
+
+          if (_ids) {
+            query = query.find({ _id: { $in: _ids } });
+          }
+        }
+
         query = query.sort('name');
 
         const page = args.page >> 0 || 1;
         const limit = args.limit >> 0 || 20;
         const skip = Math.max(0, page - 1) * limit;
 
+        /**
+         * Filter clients by name
+         */
         if (args.filter) {
           const regex = new RegExp(args.filter, 'ig');
           query = query.find({ name: regex });
@@ -78,6 +175,40 @@ const rootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         return Client.findById(args.id);
+      },
+    },
+    transactions: {
+      type: new GraphQLList(TransactionType),
+      args: {
+        createdAt: { type: GraphQLDateTime },
+        type: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        let query = Transaction.find({});
+
+        if (args.createdAt) {
+          query = query.find({
+            createdAt: {
+              $gte: startOfDay(args.createdAt),
+              $lte: endOfDay(args.createdAt),
+            },
+          });
+        }
+
+        if (args.type) {
+          query = query.find({ type: args.type });
+        }
+
+        query = query.sort('-createdAt');
+
+        return query;
+      },
+    },
+    transaction: {
+      type: TransactionType,
+      args: { id: { type: GraphQLID } },
+      resolve(parent, args) {
+        return Transaction.findById(args.id);
       },
     },
   },
@@ -122,6 +253,23 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         return Transaction.create(args);
+      },
+    },
+    updateTransaction: {
+      type: TransactionType,
+      args: { id: { type: GraphQLID }, amount: { type: GraphQLInt } },
+      resolve(parent, args) {
+        const data = { amount: args.amount };
+        return Transaction.findByIdAndUpdate(args.id, data);
+      },
+    },
+    deleteTransaction: {
+      type: TransactionType,
+      args: {
+        id: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        return Transaction.findOneAndDelete({ _id: args.id });
       },
     },
   },

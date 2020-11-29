@@ -13,11 +13,16 @@ export default function Home() {
 			</Head>
 			<div className={styles['tnx-page-home']}>
 				<div className='row'>
+					<div className='col-12'>
+						<h4>Navigate</h4>
+					</div>
+				</div>
+				<div className='row mt-5'>
 					<div className='col-6 col-md-4'>
 						<Box>
 							<QuickIcon
 								icon='fas fa-user-plus'
-								text='Client'
+								text='Add Client'
 								href='/add-client'
 							/>
 						</Box>
@@ -26,7 +31,7 @@ export default function Home() {
 						<Box>
 							<QuickIcon
 								icon='fas fa-users'
-								text='Clients'
+								text='Client List'
 								href='/clients'
 							/>
 						</Box>
@@ -37,7 +42,7 @@ export default function Home() {
 						<Box>
 							<QuickIcon
 								icon='fas fa-credit-card'
-								text='Daily Credited'
+								text='Incoming Today'
 								href='/'
 							/>
 						</Box>
@@ -46,19 +51,7 @@ export default function Home() {
 						<Box>
 							<QuickIcon
 								icon='fas fa-money-check-alt'
-								text='Daily Debited'
-								href='/'
-							/>
-						</Box>
-					</div>
-				</div>
-
-				<div className='row'>
-					<div className='col-6 col-md-4 mt-4'>
-						<Box>
-							<QuickIcon
-								icon='fas fa-chart-pie'
-								text='Stats'
+								text='Outgoing Today'
 								href='/'
 							/>
 						</Box>

@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import swal from 'sweetalert';
+import { useMutation } from '@apollo/client';
+
+import { ADD_TRANSACTION_MUTATION_QUERY } from '../../queries/transaction';
+import { GET_CLIENT_BY_ID_QUERY } from '../../queries/clients';
 
 import style from './addTransaction.module.scss';
 
-const AddTransaction = () => {
+const AddTransaction = ({ clientId }) => {
 	const [amount, setAmount] = useState('');
+
+	const [
+		addTnx,
+		{ loading: tnxLoading, error: tnxError, data: tnxData },
+	] = useMutation(ADD_TRANSACTION_MUTATION_QUERY);
+
 	const handleAmountChange = event => {
 		event.preventDefault();
 		setAmount(event.target.value);
@@ -19,9 +29,25 @@ const AddTransaction = () => {
 			text: `You are going to provide ৳${amount} to the client!`,
 			icon: 'warning',
 			buttons: ['Check Again', 'Provide'],
-		}).then(res => {
+		}).then(async res => {
 			if (res) {
-				console.log('ok', res);
+				const resp = addTnx({
+					variables: {
+						amount: amount * 1,
+						type: 'outgoing',
+						clientId,
+					},
+					refetchQueries: [
+						{
+							query: GET_CLIENT_BY_ID_QUERY,
+							variables: { id: clientId },
+						},
+					],
+				});
+
+				if (resp) {
+					setAmount('');
+				}
 			}
 		});
 	};
@@ -36,7 +62,23 @@ const AddTransaction = () => {
 			buttons: ['Check Again', 'Take'],
 		}).then(res => {
 			if (res) {
-				console.log('ok', res);
+				const resp = addTnx({
+					variables: {
+						amount: amount * 1,
+						type: 'incoming',
+						clientId,
+					},
+					refetchQueries: [
+						{
+							query: GET_CLIENT_BY_ID_QUERY,
+							variables: { id: clientId },
+						},
+					],
+				});
+
+				if (resp) {
+					setAmount('');
+				}
 			}
 		});
 	};
@@ -44,7 +86,7 @@ const AddTransaction = () => {
 	return (
 		<div className={`${style['transaction']}`}>
 			<div className='box'>
-				<h4 className={`${style['titles']}`}>Mange Transaction</h4>
+				<h4 className={`${style['titles']}`}>Add Transaction</h4>
 
 				<div className='input-group mt-4'>
 					<div className='input-group-prepend'>
