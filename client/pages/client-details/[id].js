@@ -9,7 +9,7 @@ import Head from 'next/head';
 import Layout from '../../components/layouts/Layout';
 import AddTransaction from '../../components/addTransaction/addTransaction';
 
-import { serverURI } from '../../utils';
+import { serverURI, getOS } from '../../utils';
 import { GET_CLIENT_BY_ID_QUERY } from '../../queries/clients';
 import styles from '../../styles/ClientDetails.module.scss';
 import TransactionList from '../../components/transactionList/transactionList';
@@ -17,6 +17,7 @@ import TransactionList from '../../components/transactionList/transactionList';
 const ClientDetails = () => {
 	const router = useRouter();
 
+	const [sms, setSMS] = useState('');
 	const [getClient, { loading, error, data }] = useLazyQuery(
 		GET_CLIENT_BY_ID_QUERY
 	);
@@ -26,6 +27,18 @@ const ClientDetails = () => {
 			getClient({ variables: { id: router.query.id } });
 		}
 	}, [router.query.id]);
+
+	useEffect(() => {
+		const OS = getOS();
+		if (data) {
+			const text = `sms:${data.client.mobile}${
+				OS === 'mac' || OS === 'ios' ? '&' : '?'
+			}body=Hello, I am going to know you that I owe ${
+				data.client.balance * -1
+			} from your. Please pay them ASAP.`;
+			setSMS(text);
+		}
+	}, [data]);
 
 	return (
 		<Layout>
@@ -98,12 +111,96 @@ const ClientDetails = () => {
 					</div>
 				)}
 
+				{/* send message and call */}
+				{data && (
+					<div className={`box ${styles['communication-wrapper']}`}>
+						<div className='left'>
+							<a
+								className={`${styles['communication-btn']} ${styles['readonly']}`}
+							>
+								<span
+									className={`${styles['icon']} fas ${
+										data.client.balance > 0
+											? 'fa-balance-scale-right'
+											: data.client.balance < 0
+											? 'fa-balance-scale-left'
+											: 'fa-balance-scale'
+									}`}
+								></span>
+								<span className={`${styles['text']}`}>
+									{data.client.balance !== undefined && (
+										<div>
+											{data.client.balance === 0 ? (
+												<div className='d-flex justify-content-center align-items-center text-success'>
+													<span className='fas fa-check-circle txt-success'></span>
+													<span className='ml-1'>
+														Settled
+													</span>
+												</div>
+											) : (
+												<span
+													className={`${
+														data.client.balance > 0
+															? 'txt-success'
+															: 'txt-danger'
+													}`}
+												>
+													{data.client.balance > 0
+														? `+ ৳${data.client.balance}`
+														: `- ৳${
+																data.client
+																	.balance *
+																-1
+														  }`}
+												</span>
+											)}
+										</div>
+									)}
+								</span>
+							</a>
+						</div>
+						<div className={`${styles['right']}`}>
+							<a
+								className={`${styles['communication-btn']} ${
+									styles[
+										data.client.balance >= 0
+											? 'disabled'
+											: ''
+									]
+								}`}
+								href={`${sms}`}
+							>
+								<span
+									className={`${styles['icon']} far fa-comment-dots`}
+								></span>
+								<span className={`${styles['text']}`}>SMS</span>
+							</a>
+							<a
+								className={`${styles['communication-btn']} ${
+									styles[
+										data.client.balance >= 0
+											? 'disabled'
+											: ''
+									]
+								}`}
+								href={`tel:${data.client.mobile}`}
+							>
+								<span
+									className={`${styles['icon']} fas fa-phone-alt`}
+								></span>
+								<span className={`${styles['text']}`}>
+									Contact
+								</span>
+							</a>
+						</div>
+					</div>
+				)}
+
 				{/* transaction list */}
 				{data && (
 					<div className='mt-3'>
 						<TransactionList
 							transactions={data.client.transactions || []}
-							balance={data.client.balance || 0}
 						/>
 					</div>
 				)}

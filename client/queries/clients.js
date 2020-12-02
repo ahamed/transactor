@@ -52,12 +52,14 @@ export const GET_CLIENTS_QUERY = gql`
 		$limit: Int
 		$filter: String
 		$createdAt: DateTime
+		$type: String
 	) {
 		clients(
 			page: $page
 			limit: $limit
 			filter: $filter
 			createdAt: $createdAt
+			type: $type
 		) {
 			id
 			name
@@ -68,6 +70,7 @@ export const GET_CLIENTS_QUERY = gql`
 				id
 				amount
 				type
+				createdAt
 			}
 			balance
 		}

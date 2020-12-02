@@ -106,49 +106,41 @@ const rootQuery = new GraphQLObjectType({
         type: { type: GraphQLString },
       },
       async resolve(parent, args) {
-        let query = Client.find({});
+        let query = null;
+        let _ids = [];
+
+        /**
+         * If need to query transactions by type
+         */
+        const conditions = {};
+        if (args.type) {
+          conditions.type = args.type;
+        }
 
         /**
          * If need to filter the transactions by its created date
          */
         if (args.createdAt) {
-          let transactions = Transaction.find({
-            createdAt: {
-              $gte: startOfDay(args.createdAt),
-              $lte: endOfDay(args.createdAt),
-            },
-          });
-          transactions = transactions.select('clientId');
-          transactions = await transactions.exec();
-
-          let _ids = [];
-          if (transactions) {
-            _ids = transactions.map((item) => item.clientId);
-          }
-
-          if (_ids) {
-            query = query.find({ _id: { $in: _ids } });
-          }
+          conditions.createdAt = {
+            $gte: startOfDay(args.createdAt),
+            $lte: endOfDay(args.createdAt),
+          };
         }
 
-        /**
-         * If need to query transactions by type
-         */
-        if (args.type) {
-          let transactions = Transaction.find({
-            type: args.type,
-          });
-          transactions = transactions.select('clientId');
-          transactions = await transactions.exec();
+        if (Object.keys(conditions).length > 0) {
+          let transaction = Transaction.find(conditions);
+          transaction = transaction.select('clientId');
+          const clientIds = await transaction.exec();
 
-          let _ids = [];
-          if (transactions) {
-            _ids = transactions.map((item) => item.clientId);
-          }
+          _ids = clientIds ? clientIds.map((item) => item.clientId) : [];
+        }
 
-          if (_ids) {
-            query = query.find({ _id: { $in: _ids } });
-          }
+        if (_ids.length > 0) {
+          query = Client.find({ _id: { $in: _ids } });
+        } else if (Object.keys(conditions).length > 0 && _ids.length === 0) {
+          query = Client.find({ name: '-100-103849730-4939843' }); // some invalid name
+        } else {
+          query = Client.find({});
         }
 
         query = query.sort('name');

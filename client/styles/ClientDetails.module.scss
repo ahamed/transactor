@@ -1,4 +1,54 @@
 .client-details {
+	.communication-wrapper {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 30px;
+
+		.right {
+			display: flex;
+			flex-grow: 0.15;
+			justify-content: space-between;
+		}
+		.communication-btn {
+			color: #555;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			text-decoration: none;
+			align-items: center;
+			font-weight: 900;
+
+			&.disabled {
+				color: #aeaeae;
+				cursor: not-allowed;
+				pointer-events: none;
+			}
+
+			.text {
+				font-size: 16px;
+			}
+			.icon {
+				font-size: 15px;
+				width: 40px;
+				height: 40px;
+				background: #e9ecef;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 50%;
+			}
+
+			&.readonly {
+				border-right: 1px solid #aeaeae;
+				font-weight: 500 !important;
+				padding-right: 30px;
+				.icon {
+					background: transparent;
+				}
+			}
+		}
+	}
+
 	.avatar {
 		margin-bottom: 10px;
 		img {

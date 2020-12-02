@@ -43,7 +43,7 @@ export default function Home() {
 							<QuickIcon
 								icon='fas fa-credit-card'
 								text='Incoming Today'
-								href='/'
+								href='/clients/incoming-today'
 							/>
 						</Box>
 					</div>
@@ -52,7 +52,7 @@ export default function Home() {
 							<QuickIcon
 								icon='fas fa-money-check-alt'
 								text='Outgoing Today'
-								href='/'
+								href='/clients/outgoing-today'
 							/>
 						</Box>
 					</div>
